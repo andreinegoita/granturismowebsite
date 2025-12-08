@@ -1,16 +1,22 @@
 import { Router } from 'express';
 import { GameController } from '../controllers/GameController';
+import { ReviewController } from '../controllers/ReviewController';
 import { GameRepository } from '../repositories/GameRepository';
 import { authenticateToken, requireAdmin } from '../middleware/auth.middleware';
 import { Pool } from 'pg';
+import { ReviewRepository } from '../repositories/ReviewRepository';
 
 export const createGameRouter = (pool: Pool) => {
   const router = Router();
   const gameRepo = new GameRepository(pool);
   const gameController = new GameController(gameRepo);
+  const reviewRepo = new ReviewRepository(pool);
+  const reviewController = new ReviewController(reviewRepo, gameRepo);
 
+  
   router.get('/', (req, res, next) => gameController.getAllGames(req, res, next));
   router.get('/:id', (req, res, next) => gameController.getGameById(req, res, next));
+  router.get('/:gameId/reviews', (req, res, next) => reviewController.getReviewsByGame(req, res, next));
   router.post('/', authenticateToken, requireAdmin, (req, res, next) => 
     gameController.createGame(req, res, next)
   );

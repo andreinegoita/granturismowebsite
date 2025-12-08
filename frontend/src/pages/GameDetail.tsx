@@ -1,22 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { gameService } from '../services/api';
-import type { Game } from '../types';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom'; 
+import { gameService, reviewService } from '../services/api';
+import type { Game, Review } from '../types';
 import { Carousel } from '../components/Carousel';
+import { ReviewList } from '../components/ReviewList'; 
+import { ReviewForm } from '../components/ReviewForm'; 
+import { useAuth } from '../context/useAuth';
 import '../styles/GameDetail.css';
 
 export const GameDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { user } = useAuth(); 
+
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [reviews, setReviews] = useState<Review[]>([]);
 
-  useEffect(() => {
-    loadGame();
-  }, [id]);
-
-  const loadGame = async () => {
+  const loadGame = useCallback(async () => {
     try {
+      if (!id) return;
       const response = await gameService.getById(Number(id));
       setGame(response.data);
     } catch (error) {
@@ -24,7 +27,39 @@ export const GameDetail: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  const loadReviews = useCallback(async () => {
+    try {
+      if (!id) return;
+      
+      const response = await reviewService.getByGame(Number(id));
+      
+      console.log("Response Data:", response.data);
+
+
+      const reviewsList = response.data.reviews || response.data; 
+
+      if (Array.isArray(reviewsList)) {
+          setReviews(reviewsList);
+      } else {
+          setReviews([]);
+      }
+      
+    } catch (error) {
+      console.error('Error loading reviews:', error);
+      setReviews([]); 
+    }
+}, [id]);
+
+  useEffect(() => {
+    loadGame();
+    loadReviews();
+  }, [loadGame, loadReviews]);
+
+  const averageRating = reviews.length > 0
+    ? reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length
+    : 0;
 
   if (loading) return <div className="loading">Loading...</div>;
   if (!game) return <div className="error">Game not found</div>;
@@ -50,11 +85,32 @@ export const GameDetail: React.FC = () => {
         <h2>About this game</h2>
         <p>{game.description}</p>
         
-        {game.rating && (
-          <div className="rating">
-            <span>⭐ Rating: {game.rating}/5</span>
+        <div className="rating">
+           <span>⭐ Rating: {averageRating.toFixed(1)} / 5 ({reviews.length} votes)</span>
+        </div>
+      </div>
+
+      <hr className="divider" />
+
+      <div className="reviews-section">
+        {user ? (
+          <ReviewForm 
+            gameId={game.id} 
+            onReviewAdded={loadReviews} 
+          />
+        ) : (
+          <div className="login-prompt">
+            <p>
+              Want to share your thoughts? <Link to="/login">Log in</Link> to write a review.
+            </p>
           </div>
         )}
+        
+        <ReviewList 
+          reviews={reviews}
+          averageRating={averageRating}
+          onReviewUpdated={loadReviews}
+        />
       </div>
     </div>
   );

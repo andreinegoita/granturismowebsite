@@ -34,3 +34,16 @@ export interface LoginData {
     email: string;
     password: string;
 }
+
+export interface Review {
+    id?: number;
+    userId: number;
+    gameId: number;
+    rating: number;
+    comment: string;
+    likes: number;
+    dislikes: number;
+    username?: string;
+    createdAt?: Date | string; 
+    updatedAt?: Date | string;
+}

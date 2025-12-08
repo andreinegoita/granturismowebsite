@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Game, LoginData, RegisterData } from "../types";
+import type { Game, LoginData, RegisterData, Review } from "../types";
 
 const API_URL = 'http://localhost:5000/api';
 
@@ -14,7 +14,7 @@ api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
         if(token){
-            config.headers.Authorization = 'Bearer ${token}';
+            config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
@@ -33,3 +33,18 @@ export const gameService = {
   update: (id: number, data: Game) => api.put(`/games/${id}`, data),
   delete: (id: number) => api.delete(`/games/${id}`)
 };
+
+
+export const reviewService = {
+ getByGame: (gameId: number) => api.get<ReviewsResponse>(`/games/${gameId}/reviews?_t=${new Date().getTime()}`),
+ create: (data: Partial<Review>) => api.post<Review>('/reviews', data),
+ delete: (id: number) => api.delete(`/reviews/${id}`),
+ like: (id: number) => api.post(`/reviews/${id}/like`),
+ dislike: (id: number) => api.post(`/reviews/${id}/dislike`)
+};
+
+export interface ReviewsResponse {
+    reviews: Review[];
+    averageRating: number;
+    totalReviews: number;
+}

@@ -1,0 +1,160 @@
+.review-list {
+  width: 100%;
+  margin-top: 2rem;
+  color: #e0e0e0;
+}
+
+.review-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #444;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.review-summary h3 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #fff;
+}
+
+.average-rating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #2a2a2a;
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+.rating-value {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.stars {
+  color: #ffd700; 
+  letter-spacing: 2px;
+}
+
+.no-reviews {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  padding: 2rem;
+  background-color: #252525;
+  border-radius: 8px;
+}
+
+.review-item {
+  background-color: #252525;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+.review-item:hover {
+  border-color: #555;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.review-author {
+  display: flex;
+  flex-direction: column;
+}
+
+.review-author strong {
+  font-size: 1.1rem;
+  color: #61dafb;
+}
+
+.review-date {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 2px;
+}
+
+.review-rating {
+  color: #ffd700;
+  font-size: 1.1rem;
+}
+
+.review-comment {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #d1d1d1;
+  margin-bottom: 1.5rem;
+  white-space: pre-wrap; 
+}
+
+.review-actions {
+  display: flex;
+  gap: 12px;
+  border-top: 1px solid #333;
+  padding-top: 12px;
+}
+
+.review-actions button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.like-btn {
+  color: #aaa;
+}
+.like-btn:hover {
+  background-color: rgba(97, 218, 251, 0.1);
+  color: #61dafb;
+}
+
+.dislike-btn {
+  color: #aaa;
+}
+.dislike-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.delete-btn {
+  margin-left: auto; 
+  color: #ff5f5f;
+}
+
+.delete-btn:hover {
+  background-color: rgba(255, 95, 95, 0.15);
+  color: #ff8080;
+}
+
+@media (max-width: 600px) {
+  .review-header {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .review-actions {
+    justify-content: space-between;
+  }
+  
+  .delete-btn {
+    margin-left: 0;
+  }
+}
