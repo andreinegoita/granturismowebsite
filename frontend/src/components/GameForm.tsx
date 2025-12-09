@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
 import { gameService } from '../services/api';
 import type { Game } from '../types';
 import '../styles/GameForm.css';
@@ -24,7 +24,9 @@ export const GameForm: React.FC<GameFormProps> = ({ game, onClose, onSave }) => 
     releaseYear: game?.releaseYear || 2022,
     platform: game?.platform || 'PlayStation 5',
     description: game?.description || '',
-    imageUrls: game?.imageUrls || []
+    imageUrls: Array.isArray(game?.imageUrls) 
+      ? game.imageUrls 
+      : (typeof game?.imageUrls === 'string' ? [game.imageUrls] : [])
   });
 
   const [imageUrlInput, setImageUrlInput] = useState('');
@@ -39,24 +41,39 @@ export const GameForm: React.FC<GameFormProps> = ({ game, onClose, onSave }) => 
 
   const handleAddImage = () => {
     if (imageUrlInput.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        imageUrls: [...(prev.imageUrls || []), imageUrlInput]
-      }));
+      setFormData(prev => {
+        const currentImages = Array.isArray(prev.imageUrls) ? prev.imageUrls : [];
+        return {
+          ...prev,
+          imageUrls: [...currentImages, imageUrlInput]
+        };
+      });
       setImageUrlInput('');
     }
+  };
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    setFormData(prev => {
+      const currentImages = Array.isArray(prev.imageUrls) ? prev.imageUrls : [];
+      return {
+        ...prev,
+        imageUrls: currentImages.filter((_, idx) => idx !== indexToRemove)
+      };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const finalImages = Array.isArray(formData.imageUrls) ? formData.imageUrls : [];
+
       const payload: GamePayload = {
           title: formData.title || '',
           release_year: Number(formData.releaseYear),
           platform: formData.platform || 'PlayStation 5',
           description: formData.description || '',
-          image_urls: formData.imageUrls || [],
-          rating: game?.rating 
+          image_urls: finalImages,
+          rating: game?.rating
       };
 
       if (game && game.id) {
@@ -74,7 +91,11 @@ export const GameForm: React.FC<GameFormProps> = ({ game, onClose, onSave }) => 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2>{game ? 'Edit Game' : 'Add New Game'}</h2>
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <h2>{game ? 'Edit Game' : 'Add New Game'}</h2>
+            <button onClick={onClose} style={{background:'transparent', border:'none', color:'white', fontSize:'1.5rem', cursor:'pointer'}}>×</button>
+        </div>
+        
         <form onSubmit={handleSubmit}>
           
           <div className="form-group">
@@ -116,9 +137,34 @@ export const GameForm: React.FC<GameFormProps> = ({ game, onClose, onSave }) => 
               />
               <button type="button" onClick={handleAddImage}>Add</button>
             </div>
+            
             <div className="image-preview-list">
-               {formData.imageUrls?.map((url, idx) => (
-                 <img key={idx} src={url} alt="preview" className="mini-preview" />
+               {Array.isArray(formData.imageUrls) && formData.imageUrls.map((url, idx) => (
+                 <div key={idx} style={{position: 'relative', display: 'inline-block'}}>
+                    <img src={url} alt="preview" className="mini-preview" />
+                    <button 
+                        type="button"
+                        onClick={() => handleRemoveImage(idx)}
+                        style={{
+                            position: 'absolute', 
+                            top: 0, 
+                            right: 0, 
+                            background: 'red', 
+                            color: 'white', 
+                            border: 'none', 
+                            borderRadius: '50%', 
+                            width: '20px', 
+                            height: '20px', 
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}
+                    >
+                        x
+                    </button>
+                 </div>
                ))}
             </div>
           </div>
