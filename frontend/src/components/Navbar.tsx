@@ -18,8 +18,14 @@ export const Navbar: React.FC = () => {
           
           {user ? (
             <>
+              {user.role === 'admin' && (
+                <Link to="/admin" className="admin-badge" title="Go to Admin Dashboard">
+                  ADMIN ⚙️
+                </Link>
+              )}
+
               <span className="nav-user">👤 {user.username}</span>
-              {user.role === 'admin' && <span className="admin-badge">ADMIN</span>}
+              
               <button onClick={logout} className="nav-button">Logout</button>
             </>
           ) : (

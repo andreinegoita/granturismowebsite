@@ -43,12 +43,23 @@
 }
 
 .admin-badge {
-  background: #ffd700;
-  color: #333;
+  background-color: #e53935; 
+  color: white;
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: bold;
+  margin-right: 15px;
+  text-decoration: none; 
+  transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.admin-badge:hover {
+  background-color: #ff5252; 
+  cursor: pointer;
 }
 
 .nav-button {
