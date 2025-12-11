@@ -18,6 +18,9 @@ export const Navbar: React.FC = () => {
           
           {user ? (
             <>
+              {/* Added Dashboard Link here */}
+              <Link to="/dashboard">Dashboard</Link>
+
               {user.role === 'admin' && (
                 <Link to="/admin" className="admin-badge" title="Go to Admin Dashboard">
                   ADMIN ⚙️
